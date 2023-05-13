@@ -1,2 +1,4 @@
 # pico-mandelbrot
-Replication of the mandelbrot fractal on the pico-display
+Replication of the mandelbrot fractal on the pico-display.
+
+

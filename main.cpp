@@ -5,7 +5,8 @@ using namespace pimoroni;
 ST7789 st7789(PicoDisplay::WIDTH, PicoDisplay::HEIGHT, ROTATE_0, false, get_spi_pins(BG_SPI_FRONT));
 PicoGraphics_PenRGB332 graphics(st7789.width, st7789.height, nullptr);
 
-const int MAX_COUNT = 127;
+//Set max number of iterations
+const int MAX_COUNT;
 
 int main() {
     fractal();
@@ -44,42 +45,25 @@ void fractal(){
     //Each pixel will represent a complex number (x + yi)
     for(int y = 0; y < height ; y++){
 
-        //imaginary part of "current" pixel
+        //set imaginary part of "current" pixel
         c_imaginary = im_max - (y * im_scale);
 
         for(int x = 0; x < width; x++){
 
-            //real part of "current" pixel
-            c_real = re_min + (x*re_scale);
+            //set real part of "current" pixel:
+    
 
-            //z_real
-            z_real = c_real;
+            //set z_real initial val:
+            
 
-            //z_imaginary
-            z_imaginary = c_imaginary;
+            //set z_imaginary initial val:
 
-            //count
-            int count = 0;
 
-            //Calculate whether the complex number is a part of the mandelbrot set and colour it if it is.
-            while(count < MAX_COUNT){
+            //create counter
 
-                double z_real2 = z_real * z_real;
-                double z_imaginary2 = z_imaginary * z_imaginary;
-
-                if((z_real2 + z_imaginary2) > 4){
-                    break;
-                }
-                
-                z_imaginary = 2*z_real*z_imaginary + c_imaginary;
-                z_real = z_real2 - z_imaginary2 + c_real;
-                count += 1;
-            }
-
-            graphics.set_pen(255-(count*2),255-(count*2),255-(count*2));
-
-            setPoint(x*size,y*size,size);
-            st7789.update(&graphics);
+            /*Calculate whether the complex number is a part of the mandelbrot set by 
+               iterating to the max number of iterations*/
+            //If it is a part of the set then colour the pixel
         }
     }
 

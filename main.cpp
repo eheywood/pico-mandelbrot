@@ -17,63 +17,78 @@ int main() {
 }
 
 void fractal(){
-    float c_real, c_imaginary,z_real,z_imaginary,tempx;
+    int size = 3;
+    float c_real, c_imaginary,z_real,z_imaginary;
     int count;
 
     //Size of screen
-    int xmax = __INT_WIDTH__;
-    int ymax = __INT_WIDTH__;
+    int width = 240 / size;
+    int height = 135 / size;
 
-    float left = -1.75;
-    float top = -0.25;
-    float xside = 0.25;
-    float yside = 0.45;
+    //Starting and ending complex numbers
+    float re_min = -2.0;
+    float re_max = 0.47;
+    float im_min = -1.12;
+    float im_max = 1.12;
+    //float im_max = re_min+(re_max-re_min)*(height/width);
 
     //Scaling
-    float xscale = xside / xmax;
-    float yscale = yside / ymax;
+    float re_scale = (re_min-re_max) / width;
+    float im_scale = (im_min-im_max) / height;
+
 
     //Need to loop through all pixels on screen.
     //Each pixel will represent a complex number (x + yi)
-    for(int x = 0; x < xmax -1; x++){
-        for(int y = 0; y < ymax -1; y++){
+    for(int y = 0; y < height ; y++){
+        for(int x = 0; x < width; x++){
             //Calculate whether the complex number is a part of the mandelbrot set and colour it if it is.
 
-            //c_real
-            c_real = x * xscale + left;
+            //real part of number:
+            c_real = re_min + (x*re_scale);
 
             //c_imaginary
-            c_imaginary = y * yscale + top;
+            c_imaginary = im_min - (y * im_scale);
 
             //z_real
-            z_real = 0;
+            z_real = c_real;
 
             //z_imaginary
-            z_imaginary = 0;
+            z_imaginary = c_imaginary;
 
             //count
             count = 0;
+            while(count < MAX_COUNT){
 
-            while(count < MAX_COUNT && (z_real * z_real + z_imaginary * z_imaginary < 4)){
-                tempx = z_real*z_real - z_imaginary * z_imaginary + c_real;
+                double z_real2 = z_real * z_real;
+                double z_imaginary2 = z_imaginary * z_imaginary;
 
-                z_imaginary = 2 * z_real * z_imaginary * c_real;
-
-                z_real = tempx;
-
+                if((z_real2 + z_imaginary2) > 4){
+                    break;
+                }
+                
+                z_imaginary = 2*z_real*z_imaginary + c_imaginary;
+                z_real = z_real2 - z_imaginary2 + c_real;
                 count += 1;
             }
 
-
-
-
             //If count > 1 then display
-            if(count > 2){
-                graphics.set_pen(255,255,255);
-            }else{
+            if(count == MAX_COUNT){
                 graphics.set_pen(0,0,0);
+            }else{
+                graphics.set_pen(255,255,255);
             }
-            graphics.set_pixel(Point(x,y));
+
+            setPoint(x*size,y*size,size);
+            st7789.update(&graphics);
+        }
+    }
+
+}
+
+void setPoint(int x, int y, int size){
+    for(int i = 0; i < size; i++ ){
+        for(int j = 0; j < size; j++){
+            graphics.set_pixel(Point(x+i,y+j));
         }
     }
 }

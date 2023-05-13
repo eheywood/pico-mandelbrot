@@ -8,7 +8,7 @@ using namespace pimoroni;
 ST7789 st7789(PicoDisplay::WIDTH, PicoDisplay::HEIGHT, ROTATE_0, false, get_spi_pins(BG_SPI_FRONT));
 PicoGraphics_PenRGB332 graphics(st7789.width, st7789.height, nullptr);
 
-const int MAX_COUNT = 30;
+const int MAX_COUNT = 127;
 
 int main() {
 
@@ -17,8 +17,8 @@ int main() {
 }
 
 void fractal(){
-    int size = 3;
-    float c_real, c_imaginary,z_real,z_imaginary;
+    int size = 1;
+    double c_real, c_imaginary,z_real,z_imaginary;
     int count;
 
     //Size of screen
@@ -26,28 +26,28 @@ void fractal(){
     int height = 135 / size;
 
     //Starting and ending complex numbers
-    float re_min = -2.0;
-    float re_max = 0.47;
-    float im_min = -1.12;
-    float im_max = 1.12;
-    //float im_max = re_min+(re_max-re_min)*(height/width);
+    double re_min = -2.0;
+    double re_max = 0.47;
+    double im_min = -1.12;
+    double im_max = 1.12;
+    //double im_max = re_min+(re_max-re_min)*(height/width);
 
     //Scaling
-    float re_scale = (re_min-re_max) / width;
-    float im_scale = (im_min-im_max) / height;
+    double re_scale = (re_max-re_min) / width;
+    double im_scale = (im_max-im_min) / height;
 
 
     //Need to loop through all pixels on screen.
     //Each pixel will represent a complex number (x + yi)
     for(int y = 0; y < height ; y++){
+        //c_imaginary
+        c_imaginary = im_max - (y * im_scale);
+
         for(int x = 0; x < width; x++){
             //Calculate whether the complex number is a part of the mandelbrot set and colour it if it is.
 
             //real part of number:
             c_real = re_min + (x*re_scale);
-
-            //c_imaginary
-            c_imaginary = im_min - (y * im_scale);
 
             //z_real
             z_real = c_real;
@@ -71,12 +71,7 @@ void fractal(){
                 count += 1;
             }
 
-            //If count > 1 then display
-            if(count == MAX_COUNT){
-                graphics.set_pen(0,0,0);
-            }else{
-                graphics.set_pen(255,255,255);
-            }
+            graphics.set_pen(255-(count*2),255-(count*2),255-(count*2));
 
             setPoint(x*size,y*size,size);
             st7789.update(&graphics);

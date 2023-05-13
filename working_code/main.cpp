@@ -1,6 +1,3 @@
-#include "pico_display.hpp"
-#include "drivers/st7789/st7789.hpp"
-#include "libraries/pico_graphics/pico_graphics.hpp"
 #include "main.h"
 
 using namespace pimoroni;
@@ -11,42 +8,48 @@ PicoGraphics_PenRGB332 graphics(st7789.width, st7789.height, nullptr);
 const int MAX_COUNT = 127;
 
 int main() {
-
     fractal();
-    st7789.update(&graphics);
 }
 
+/* Does the calculating for the mandelbrot set*/
 void fractal(){
-    int size = 1;
-    double c_real, c_imaginary,z_real,z_imaginary;
-    int count;
+
+    /* Use a size of 3 for testing otherwise you will be 
+        waiting for  a very long time*/
+    int size = 3;
+
+    //The current number made from the real part and the imaginary part
+    double c_real, c_imaginary;
+
+    //The newly calculated number made from the real part and imaginary part
+    double z_real,z_imaginary;
 
     //Size of screen
     int width = 240 / size;
     int height = 135 / size;
 
     //Starting and ending complex numbers
+    //real:
     double re_min = -2.0;
     double re_max = 0.47;
+    //imaginary
     double im_min = -1.12;
     double im_max = 1.12;
-    //double im_max = re_min+(re_max-re_min)*(height/width);
 
     //Scaling
     double re_scale = (re_max-re_min) / width;
     double im_scale = (im_max-im_min) / height;
 
-
     //Need to loop through all pixels on screen.
     //Each pixel will represent a complex number (x + yi)
     for(int y = 0; y < height ; y++){
-        //c_imaginary
+
+        //imaginary part of "current" pixel
         c_imaginary = im_max - (y * im_scale);
 
         for(int x = 0; x < width; x++){
-            //Calculate whether the complex number is a part of the mandelbrot set and colour it if it is.
 
-            //real part of number:
+            //real part of "current" pixel
             c_real = re_min + (x*re_scale);
 
             //z_real
@@ -56,7 +59,9 @@ void fractal(){
             z_imaginary = c_imaginary;
 
             //count
-            count = 0;
+            int count = 0;
+
+            //Calculate whether the complex number is a part of the mandelbrot set and colour it if it is.
             while(count < MAX_COUNT){
 
                 double z_real2 = z_real * z_real;
@@ -80,6 +85,8 @@ void fractal(){
 
 }
 
+/*Sets a "pixel" of a specified size. Use to speed 
+    up the rendering process*/
 void setPoint(int x, int y, int size){
     for(int i = 0; i < size; i++ ){
         for(int j = 0; j < size; j++){
